@@ -41,7 +41,7 @@ No durable agents are required: this project deliberately runs without Heimdall 
 
 | Key | Description | Status | Date | Release | Path |
 |---|---|---|---|---|---|
-| _none yet — first milestone opens at Draft_ | | | | | |
+| `milestone_v2026.07.13_delivery-surface` | Full delivery surface + skeletal site; Principal CI/CD training | Active | started 2026-07-13 | — | `docs/milestones/milestone_v2026.07.13_delivery-surface/` |
 
 ## Provision
 
