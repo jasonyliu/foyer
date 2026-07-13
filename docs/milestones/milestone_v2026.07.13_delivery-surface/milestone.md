@@ -1,6 +1,6 @@
 # Milestone: Delivery Surface (`milestone_v2026.07.13_delivery-surface`)
 
-**Status:** Active (started 2026-07-13)
+**Status:** Completed (2026-07-14) — Release `v2026.07.13` (`releases/release_v2026.07.13/release.md`). The Operation-stage hotfix exercise (curriculum step 8b) runs post-close by design; its record lives on its hotfix Task.
 
 ## Scope
 
