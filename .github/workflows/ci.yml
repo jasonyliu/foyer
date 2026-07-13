@@ -1,0 +1,57 @@
+name: CI
+
+# One workflow, one always-reporting check named "CI", tiered by event
+# per PROJECT.md §Environments "CI by branch event".
+on:
+  push:
+    branches:
+      - 'feature/**'
+      - 'fix/**'
+  pull_request:
+    branches: [dev, main]
+
+defaults:
+  run:
+    working-directory: apps/site
+
+jobs:
+  ci:
+    name: CI
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+
+      - name: Resolve tier
+        id: tier
+        env:
+          EVENT: ${{ github.event_name }}
+          BASE: ${{ github.base_ref }}
+          HEAD: ${{ github.head_ref }}
+        run: |
+          if [ "$EVENT" = "push" ]; then TIER=fast                     # push to feature/** | fix/**
+          elif [ "$BASE" = "main" ] && [ "$HEAD" = "dev" ]; then TIER=release    # PR dev -> main
+          elif [ "$BASE" = "main" ]; then TIER=focused                 # PR hotfix/** -> main
+          elif [ "$BASE" = "dev" ] && [ "$HEAD" = "main" ]; then TIER=back-merge # PR main -> dev
+          else TIER=full                                               # PR feature/** | fix/** -> dev
+          fi
+          echo "tier=$TIER" >> "$GITHUB_OUTPUT"
+          echo "### CI tier: \`$TIER\`" >> "$GITHUB_STEP_SUMMARY"
+
+      - uses: actions/setup-node@v5
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: apps/site/package-lock.json
+
+      - run: npm ci
+
+      - name: Typecheck
+        if: steps.tier.outputs.tier != 'back-merge'
+        run: npm run typecheck
+
+      - name: Test
+        run: npm test
+
+      - name: Build
+        if: contains(fromJSON('["full","release"]'), steps.tier.outputs.tier)
+        run: npm run build
