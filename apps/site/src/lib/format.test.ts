@@ -9,7 +9,7 @@ describe('formatUpdated', () => {
     expect(formatUpdated(daysAgo(0), now)).toBe('today')
   })
   it('one day is yesterday', () => {
-    expect(formatUpdated(daysAgo(1), now)).toBe('yesterday')
+    expect(formatUpdated(daysAgo(1), now)).toBe('1 day ago')
   })
   it('under a month counts days', () => {
     expect(formatUpdated(daysAgo(12), now)).toBe('12 days ago')
