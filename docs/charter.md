@@ -35,18 +35,19 @@ No durable agents are required: this project deliberately runs without Heimdall 
 
 | Product | Description | Source |
 |---|---|---|
-| Portal site | Personal portal at psyphix.com | `main/apps/site/` — pending first release |
+| Portal site | Personal portal, live at https://psyphix.com | `main/apps/site/`, deployed `v2026.07.13` via Cloudflare Pages |
 
 ## Milestones
 
 | Key | Description | Status | Date | Release | Path |
 |---|---|---|---|---|---|
-| `milestone_v2026.07.13_delivery-surface` | Full delivery surface + skeletal site; Principal CI/CD training | Active | started 2026-07-13 | — | `docs/milestones/milestone_v2026.07.13_delivery-surface/` |
+| _none — next milestone opens at Draft_ | | | | | |
+| `milestone_v2026.07.13_delivery-surface` | Full delivery surface + skeletal site; Principal CI/CD training | Completed | completed 2026-07-14 | `v2026.07.13` | `docs/milestones/milestone_v2026.07.13_delivery-surface/` |
 
 ## Provision
 
 - Node 22 (local: v22.22.1) with `typecheck` + `test` (vitest) scripts, mirroring the psyphix app stack.
-- GitHub private repository `jasonyliu/foyer` — pending creation.
-- `gh` CLI authenticated as `jasonyliu` — pending login.
-- Domain `psyphix.com` — ownership/registration to confirm.
-- Hosting for the deployed site — to decide; Cloudflare Pages proposed (existing Cloudflare footprint), GitHub Pages the simpler alternative.
+- GitHub repository `jasonyliu/foyer` — public while rulesets require it on the free plan; Pro upgrade before any flip to private, else enforcement silently stops.
+- GitHub access: per-command PAT binding from the keystore (`github/psyphix-claw.token` for agent writes, `jasonyliu.token` for admin acts) per TOOLS.md — no global `gh` sessions.
+- Rulesets: `protect-main` (PR + 1 approval + `CI` + up-to-date), `protect-dev` (PR + `CI`); merge commits only; auto-merge + delete-on-merge.
+- Hosting: Cloudflare Pages — production branch `main`, root `apps/site`, build `npm run build` → `dist`, `NODE_VERSION=22`; custom domain psyphix.com.
