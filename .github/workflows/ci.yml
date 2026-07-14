@@ -2,6 +2,8 @@ name: CI
 
 # One workflow, one always-reporting check named "CI", tiered by event
 # per PROJECT.md §Environments "CI by branch event".
+# back-merge tier retired 2026-07-14: hotfix propagation is dual parallel
+# lanes (hotfix/** -> main and -> dev), both focused; no main -> dev merge.
 on:
   push:
     branches:
@@ -30,9 +32,11 @@ jobs:
         run: |
           if [ "$EVENT" = "push" ]; then TIER=fast                     # push to feature/** | fix/**
           elif [ "$BASE" = "main" ] && [ "$HEAD" = "dev" ]; then TIER=release    # PR dev -> main
-          elif [ "$BASE" = "main" ]; then TIER=focused                 # PR hotfix/** -> main
-          elif [ "$BASE" = "dev" ] && [ "$HEAD" = "main" ]; then TIER=back-merge # PR main -> dev
-          else TIER=full                                               # PR feature/** | fix/** -> dev
+          else
+            case "$HEAD" in
+              hotfix/*) TIER=focused ;;                                # PR hotfix/** -> main | dev
+              *)        TIER=full ;;                                   # PR feature/** | fix/** -> dev
+            esac
           fi
           echo "tier=$TIER" >> "$GITHUB_OUTPUT"
           echo "### CI tier: \`$TIER\`" >> "$GITHUB_STEP_SUMMARY"
@@ -46,7 +50,6 @@ jobs:
       - run: npm ci
 
       - name: Typecheck
-        if: steps.tier.outputs.tier != 'back-merge'
         run: npm run typecheck
 
       - name: Test
